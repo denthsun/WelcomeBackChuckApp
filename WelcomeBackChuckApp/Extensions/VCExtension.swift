@@ -14,12 +14,12 @@ extension ViewController {
         UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseIn) { [weak self] in
             self?.label.center.y = (self?.label.center.y)! + 700
             self?.likeButton.center.y = (self?.likeButton.center.y)! + 700
-            self?.label.textColor = .systemGray6
+            self?.label.textColor = .black
             self?.label.text = "wait for it"
             self?.view.backgroundColor = .orange
         }
-        dispatchGroup.notify(queue: .main) { [weak self] in
-            self?.moveBack()
+        dispatchGroup.notify(queue: .main) {
+            self.moveBack()
         }
     }
     

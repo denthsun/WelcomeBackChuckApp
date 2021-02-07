@@ -23,3 +23,17 @@ var chuckJokes: [JokeModel] = []
 
 let notificationType = "ChuckIsBack"
 
+
+struct Translated: Decodable {
+    var status: Int
+    var from: String
+    var to: String
+    var original_text: String
+    var translated_text: [String : String]
+    var translated_characters: Int
+    
+
+}
+
+
+var translated: Translated?

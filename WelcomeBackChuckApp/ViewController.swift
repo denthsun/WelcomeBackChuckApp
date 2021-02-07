@@ -12,6 +12,7 @@ import UserNotifications
 class ViewController: UIViewController {
     
     let dispatchGroup = DispatchGroup()
+    let translateDispatchGroup = DispatchGroup()
     let label = UILabel()
     let button = UIButton()
     var image = UIImageView()
@@ -19,6 +20,8 @@ class ViewController: UIViewController {
     let likeButton = UIButton()
     var iconImage = UIImage()
     let notifications = Notifications()
+    
+    var quote = ""
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,6 +30,18 @@ class ViewController: UIViewController {
         title = "Chuck Jokes"
         view.backgroundColor = .black
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Liked", style: .plain, target: self, action: #selector(leftBarButtonTapped))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "translate", style: .plain, target: self, action: #selector(rightButtonFunc))
+    }
+    
+    @objc func rightButtonFunc() {
+        quote = currentChuckJoke!.value
+        translateRequest()
+        translateDispatchGroup.notify(queue: .main) {
+            let text = translated?.translated_text
+            
+            self.view.backgroundColor = .systemGray2
+            self.label.text = text!["ru"]
+        }
     }
     
     @objc func leftBarButtonTapped() {
@@ -40,10 +55,10 @@ class ViewController: UIViewController {
         
         label.textColor = .systemRed
         label.font = UIFont(name: "Palatino-Bold", size: 30)
-        label.backgroundColor = .white
         label.adjustsFontSizeToFitWidth = true
+        label.backgroundColor = .white
         label.enableCornerRadius(radius: 10)
-        label.text = "Hi, tap Get Joke and find new Chuck Norris)"
+        label.text = "Hi, tap Get Joke and find new jokes bout Mr Chuck Norris)"
         label.textAlignment = .center
         label.numberOfLines = 0
         
