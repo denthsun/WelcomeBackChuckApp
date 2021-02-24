@@ -1,54 +1,15 @@
 //
-//  ViewController.swift
+//  VCSetup.swift
 //  WelcomeBackChuckApp
 //
-//  Created by Denis Velikanov on 12.12.2020.
+//  Created by Denis Velikanov on 25.02.2021.
 //
 
+import Foundation
 import UIKit
-import CoreData
-import UserNotifications
 
-class ViewController: UIViewController {
+extension ViewController {
     
-    let dispatchGroup = DispatchGroup()
-    let translateDispatchGroup = DispatchGroup()
-    let label = UILabel()
-    let button = UIButton()
-    var image = UIImageView()
-    let stackView = UIStackView()
-    let likeButton = UIButton()
-    var iconImage = UIImage()
-    let notifications = Notifications()
-    
-    var quote = ""
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setup()
-        constraint()
-        title = "Chuck Jokes"
-        view.backgroundColor = .black
-        navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Liked", style: .plain, target: self, action: #selector(leftBarButtonTapped))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "translate", style: .plain, target: self, action: #selector(rightButtonFunc))
-    }
-    
-    @objc func rightButtonFunc() {
-        quote = currentChuckJoke!.value
-        translateRequest()
-        translateDispatchGroup.notify(queue: .main) {
-            let text = translated?.translated_text
-            
-            self.view.backgroundColor = .systemGray2
-            self.label.text = text!["ru"]
-        }
-    }
-    
-    @objc func leftBarButtonTapped() {
-        let vc = LikedViewController()
-        navigationController?.pushViewController(vc, animated: true)
-    }
-      
     func setup() {
         [stackView].forEach { view.addSubview($0) }
         [image, label, likeButton, button].forEach { stackView.addSubview($0) }

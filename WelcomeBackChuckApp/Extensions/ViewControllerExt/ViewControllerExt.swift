@@ -9,8 +9,14 @@ import UIKit
 import CoreData
 
 extension ViewController {
+    
     @objc func getData() {
-        jokeRequest()
+        dataFetcherService.fetchChuckJoke { (newJoke) in
+            currentChuckJoke = newJoke
+            dispatchGroup.leave()
+            print("Joke is here")
+        }
+        
         UIView.animate(withDuration: 0.6, delay: 0, options: .curveEaseIn) { [weak self] in
             self?.label.center.y = (self?.label.center.y)! + 700
             self?.likeButton.center.y = (self?.likeButton.center.y)! + 700
@@ -35,6 +41,12 @@ extension ViewController {
         }
     }
     
+    func setTranslatedText() {
+        let text = translated?.translated_text
+        self.view.backgroundColor = .systemGray2
+        self.label.text = text?["ru"]
+    }
+    
     @objc func likeTapped() {
         likeButton.setImage(UIImage(named: "fullHeart"), for: .normal)
         saveLiked()
@@ -55,22 +67,22 @@ extension ViewController {
             print("Could not save. \(error), \(error.userInfo)")
         }
     }
-}
-
-extension LikedViewController {
-    func removeCoreData() {
-        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
-        let managedContext = appDelegate.persistentContainer.viewContext
-        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "JokeModel")
-        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
-        
-        do {
-            try managedContext.execute(deleteRequest)
-            
-        } catch let error as NSError {
-            
-            print(error.localizedDescription)
+    
+    @objc func rightButtonFunc() {
+        dataFetcherService.fetchTranslate(quote: currentChuckJoke?.value ?? "fly me to the moon") { (translatedJoke) in
+            translated = translatedJoke
+            print("Translated is here")
+            translateDispatchGroup.leave()
         }
-        tableView.reloadData()
+        
+        translateDispatchGroup.notify(queue: .main) {
+            self.setTranslatedText()
+        }
+    }
+    
+    @objc func leftBarButtonTapped() {
+        let vc = LikedViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
+

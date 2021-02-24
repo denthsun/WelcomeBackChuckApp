@@ -1,28 +1,30 @@
 //
-//  LikedViewController.swift
+//  LikedViewControllerEXT.swift
 //  WelcomeBackChuckApp
 //
-//  Created by Denis Velikanov on 14.12.2020.
+//  Created by Denis Velikanov on 24.02.2021.
 //
 
+import Foundation
 import UIKit
 import CoreData
 
-class LikedViewController: UIViewController {
+extension LikedViewController {
     
-    let label = UILabel()
-    let tableView = UITableView()
-    var imageForPass = UIImage()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .systemBlue
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(systemName: "trash"), style: .plain, target: self, action: #selector(clearCoreData))
-        updateTableView()
-        register()
-        setup()
-        constraint()
-        fetchImage()
+    func removeCoreData() {
+        guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
+        let managedContext = appDelegate.persistentContainer.viewContext
+        let fetchRequest: NSFetchRequest<NSFetchRequestResult> = NSFetchRequest(entityName: "JokeModel")
+        let deleteRequest = NSBatchDeleteRequest(fetchRequest: fetchRequest)
+        
+        do {
+            try managedContext.execute(deleteRequest)
+            
+        } catch let error as NSError {
+            
+            print(error.localizedDescription)
+        }
+        tableView.reloadData()
     }
     
     @objc func clearCoreData() {
@@ -31,36 +33,13 @@ class LikedViewController: UIViewController {
         guard let appDelegate = UIApplication.shared.delegate as? AppDelegate else { return }
         let managedContext = appDelegate.persistentContainer.viewContext
         let fetchRequest = NSFetchRequest<JokeModel>(entityName: "JokeModel")
-
+        
         do {
             chuckJokes = try managedContext.fetch(fetchRequest)
         } catch let error as NSError {
             print("Could not fetch. \(error), \(error.userInfo)")
         }
         tableView.reloadData()
-    }
-    
-    func setup() {
-        [label, tableView].forEach { view.addSubview($0) }
-        
-        tableView.delegate = self
-        tableView.dataSource = self
-        tableView.enableCornerRadius(radius: 15)
-        tableView.backgroundColor = .systemIndigo
-        
-        label.text = "You liked: "
-        label.font = UIFont.boldSystemFont(ofSize: 30)
-        label.textColor = .black
-        label.textAlignment = .center
-    }
-    
-    func constraint() {
-        label.anchor(top: view.safeAreaLayoutGuide.topAnchor, leading: view.safeAreaLayoutGuide.leadingAnchor, bottom: tableView.topAnchor, trailing: view.safeAreaLayoutGuide.trailingAnchor, padding: .init(top: 30, left: 10, bottom: 30, right: 10))
-        tableView.anchor(top: label.bottomAnchor, leading: view.safeAreaLayoutGuide.leadingAnchor, bottom: view.safeAreaLayoutGuide.bottomAnchor, trailing: view.safeAreaLayoutGuide.trailingAnchor, padding: .init(top: 10, left: 10, bottom: 10, right: 10))
-    }
-    
-    func register() {
-        tableView.register(TableViewCell.nib(), forCellReuseIdentifier: TableViewCell.identifier)
     }
     
     func fetchImage() {
@@ -91,6 +70,7 @@ class LikedViewController: UIViewController {
 }
 
 extension LikedViewController: UITableViewDelegate, UITableViewDataSource {
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return chuckJokes.count
     }
@@ -102,3 +82,4 @@ extension LikedViewController: UITableViewDelegate, UITableViewDataSource {
         return cell
     }
 }
+
