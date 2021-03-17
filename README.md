@@ -1,4 +1,4 @@
 # WelcomeBackChuckApp
 colors edit
 
-App for requests, parse JSON, Notifications, Core Data
+App for URLRequests, parse JSON, Notifications, Core Data
